@@ -277,6 +277,34 @@ paths:
       security:
         - JWT: []
   /api/diarias:
+    get:
+      operationId: getDiarias
+      tags:
+        - Diárias
+      description: Listas as diárias do usuário logado
+      responses:
+        "200":
+          description: Listagem realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DiariaResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
     post:
       operationId: postDiaria
       tags:
@@ -308,6 +336,47 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
         "403":
           description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
+  /api/diarias/{diariaId}:
+    get:
+      operationId: getDiaria
+      tags:
+        - Diárias
+      description: Busca uma diária por id
+      parameters:
+        - name: diariaId
+          in: path
+          description: ID da diária a buscada
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Diária encontrada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/DiariaResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Diária não encontrada
           content:
             "application/json":
               schema:
