@@ -23,6 +23,7 @@ tags:
   - name: Endereços
   - name: Pagamentos
   - name: Oportunidades
+  - name: Recuperar Senha
 paths:
   /api:
     get:
@@ -904,6 +905,54 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
       security:
         - JWT: []
+  /api/recuperar-senha:
+    post:
+      operationId: solicitarResetSenha
+      tags:
+        - Recuperar Senha
+      description: Solicita o reset de senha de um usuário
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/ResetSenhaRequest"
+      responses:
+        "200":
+          description: Reset de senha solicitado com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/recuperar-senha/confirm:
+    post:
+      operationId: confirmarResetSenha
+      tags:
+        - Recuperar Senha
+      description: Confirma o reset de senha de um usuário
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/ConfirmResetSenhaRequest"
+      responses:
+        "200":
+          description: Confirmação de reset de senha realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     DiaristaLocalidadePagedResponse:
@@ -1603,6 +1652,35 @@ components:
         foto_usuario:
           type: string
           format: binary
+    ResetSenhaRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+    ConfirmResetSenhaRequest:
+      type: object
+      required:
+        - email
+        - password
+        - password_confirmation
+        - token
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        password:
+          type: string
+          format: password
+        password_confirmation:
+          type: string
+          format: password
+        token:
+          type: string
   securitySchemes:
     JWT:
       type: http
