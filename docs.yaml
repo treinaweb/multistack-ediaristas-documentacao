@@ -593,6 +593,59 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Diária não encontrada
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
+  /api/diarias/{diariaId}/confirmar-presenca:
+    patch:
+      operationId: confirmarPresenca
+      tags:
+        - Diárias
+      description: Confirmar a presença do diárista para a diária
+      parameters:
+        - name: diariaId
+          in: path
+          description: ID da diária para confirmar a presença
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: Confirmação de presença do diárista realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "401":
           description: Usuário não está autenticado
           content:
