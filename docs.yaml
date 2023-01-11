@@ -175,6 +175,142 @@ paths:
             "application/json":
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/usuarios/endereco:
+    get:
+      operationId: getUsuarioEndereco
+      tags:
+        - Usuários
+      description: Exibe o endereço do usuário logado
+      responses:
+        "200":
+          description: Endereço do usuário logado exibido com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/UsuarioEnderecoResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: O endereço do usuário logado não foi encontrado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
+    put:
+      operationId: putUsuarioEndereco
+      tags:
+        - Usuários
+      description: Altera o endereço do usuário logado
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UsuarioEnderecoRequest"
+      responses:
+        "200":
+          description: Alteração do endereço realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/UsuarioEnderecoResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
+  /api/usuarios/cidades-atendidas:
+    get:
+      operationId: getUsuaruiCidadesAtendidas
+      tags:
+        - Usuários
+      description: Lista as cidades atendidas pelo usuário logado
+      responses:
+        "200":
+          description: Listagem realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UsuarioCidadeAtendidaResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
+    put:
+      operationId: putUsuarioCidadesAtendidas
+      tags:
+        - Usuários
+      description: Atualiza as cidades atendidas pelo usuário logado
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UsuarioCidadesAtendidadasRequest"
+      responses:
+        "200":
+          description: Cidades atendidas pelo usuário logado atualizadas com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
   /auth/token:
     post:
       operationId: token
@@ -867,6 +1003,94 @@ components:
       type: object
       properties:
         mensagem:
+          type: string
+    UsuarioEnderecoRequest:
+      type: object
+      required:
+        - logradouro
+        - numero
+        - bairro
+        - cep
+        - cidade
+        - estado
+      properties:
+        logradouro:
+          type: string
+          minLength: 3
+          maxLength: 255
+        numero:
+          type: string
+          minLength: 1
+          maxLength: 255
+        bairro:
+          type: string
+          minLength: 3
+          maxLength: 255
+        cep:
+          type: string
+          minLength: 8
+          maxLength: 8
+        cidade:
+          type: string
+          minLength: 3
+          maxLength: 255
+        estado:
+          type: string
+          minLength: 2
+          maxLength: 2
+        complemento:
+          type: string
+          maxLength: 255
+    UsuarioEnderecoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        logradouro:
+          type: string
+        numero:
+          type: string
+        bairro:
+          type: string
+        cep:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        complemento:
+          type: string
+    UsuarioCidadesAtendidadasRequest:
+      type: object
+      required:
+        - cidades
+      properties:
+        cidades:
+          type: array
+          items:
+            $ref: "#/components/schemas/UsuarioCidadeAtendidaRequest"
+    UsuarioCidadeAtendidaRequest:
+      type: object
+      required:
+        - cidade
+        - codigo_ibge
+      properties:
+        cidade:
+          type: string
+          minLength: 3
+          maxLength: 255
+        codigo_ibge:
+          type: string
+    UsuarioCidadeAtendidaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        cidade:
+          type: string
+        estado:
+          type: string
+        codigo_ibge:
           type: string
   securitySchemes:
     JWT:
