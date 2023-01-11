@@ -13,8 +13,11 @@ servers:
   - url: https://ediaristas-api-php.herokuapp.com
     description: Aplicação Laravel Heroku
 tags:
+  - name: Me
   - name: Api
+  - name: Auth
   - name: Serviços
+  - name: Usuários
   - name: Diaristas
   - name: Endereços
 paths:
@@ -147,6 +150,131 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ServicoResponse"
+  /api/usuarios:
+    post:
+      operationId: postUsuario
+      tags:
+        - Usuários
+      description: Cadastrar um novo usuário
+      requestBody:
+        content:
+          "multipart/form-data":
+            schema:
+              $ref: "#/components/schemas/CreateUsuarioRequest"
+      responses:
+        "201":
+          description: Usuário cadastrado com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/CreatedUsuarioResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/token:
+    post:
+      operationId: token
+      tags:
+        - Auth
+      description: Autenticar com as credenciais do usuário
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/CredentialsRequest"
+      responses:
+        "200":
+          description: Autenticação realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Credenciais incorretas
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/refresh:
+    post:
+      operationId: refresh
+      tags:
+        - Auth
+      description: Autenticar com o refresh token
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: Autenticação realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Refresh token inválido
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /auth/logout:
+    post:
+      operationId: logout
+      tags:
+        - Auth
+      description: Realizar logout ao inválidar o refresh token
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "205":
+          description: Logout realizado com sucesso
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/me:
+    get:
+      operationId: getMe
+      tags:
+        - Me
+      description: Obter os dados do usuário logado
+      responses:
+        "200":
+          description: Usuário logado obtido com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/MeResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
 components:
   schemas:
     DiaristaLocalidadePagedResponse:
@@ -278,3 +406,147 @@ components:
             - twf-cleaning-3
         posicao:
           type: integer
+    CreateUsuarioRequest:
+      type: object
+      required:
+        - nome_completo
+        - email
+        - password
+        - password_confirmation
+        - tipo_usuario
+        - cpf
+        - nascimento
+        - telefone
+        - foto_documento
+      properties:
+        nome_completo:
+          type: string
+          minLength: 3
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        password:
+          type: string
+          format: password
+        password_confirmation:
+          type: string
+          format: password
+        tipo_usuario:
+          type: integer
+          enum:
+            - 1
+            - 2
+        cpf:
+          type: string
+          minLength: 11
+          maxLength: 11
+        nascimento:
+          type: string
+          format: date
+        telefone:
+          type: string
+          minLength: 11
+          maxLength: 11
+        foto_documento:
+          type: string
+          format: binary
+        chave_pix:
+          type: string
+          minLength: 11
+          maxLength: 255
+    CreatedUsuarioResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome_completo:
+          type: string
+        email:
+          type: string
+          format: email
+        tipo_usuario:
+          type: integer
+          enum:
+            - 1
+            - 2
+        cpf:
+          type: string
+        nascimento:
+          type: string
+          format: date
+        telefone:
+          type: string
+        foto_usuario:
+          type: string
+          format: uri
+        chave_pix:
+          type: string
+        token:
+          $ref: "#/components/schemas/TokenResponse"
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkResponse"
+    TokenResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+    CredentialsRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    RefreshRequest:
+      type: object
+      required:
+        - refresh
+      properties:
+        refresh:
+          type: string
+    MeResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome_completo:
+          type: string
+        email:
+          type: string
+          format: email
+        tipo_usuario:
+          type: integer
+          enum:
+            - 1
+            - 2
+        cpf:
+          type: string
+        nascimento:
+          type: string
+          format: date
+        telefone:
+          type: string
+        foto_usuario:
+          type: string
+          format: uri
+        chave_pix:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkResponse"
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
