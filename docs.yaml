@@ -21,6 +21,7 @@ tags:
   - name: Usuários
   - name: Diaristas
   - name: Endereços
+  - name: Pagamentos
   - name: Oportunidades
 paths:
   /api:
@@ -799,6 +800,35 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
       security:
         - JWT: []
+  /api/pagamentos:
+    get:
+      operationId: getPagamentos
+      tags:
+        - Pagamentos
+      description: Lista os pagamentos realizados para o usuário logado
+      responses:
+        "200":
+          description: Listagem de pagametos realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PagamentoResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
 components:
   schemas:
     DiaristaLocalidadePagedResponse:
@@ -1430,6 +1460,25 @@ components:
           type: string
           minLength: 3
           maxLength: 255
+    PagamentoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: integer
+          enum:
+            - 1
+            - 2
+        valor:
+          type: number
+          format: double
+        valor_deposito:
+          type: number
+          format: double
+        created_at:
+          type: string
+          format: date-time
   securitySchemes:
     JWT:
       type: http
