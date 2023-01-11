@@ -16,6 +16,7 @@ tags:
   - name: Me
   - name: Api
   - name: Auth
+  - name: Diárias
   - name: Serviços
   - name: Usuários
   - name: Diaristas
@@ -269,6 +270,44 @@ paths:
                 $ref: "#/components/schemas/MeResponse"
         "401":
           description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+        - JWT: []
+  /api/diarias:
+    post:
+      operationId: postDiaria
+      tags:
+        - Diárias
+      description: Cadastrar nova Diária
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/DiariaRequest"
+      responses:
+        "201":
+          description: Diária cadastrada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/DiariaResponse"
+        "400":
+          description: Houveram erros de validação
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Usuário não está autenticado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Usuário logado não tem acesso para realizar essa operação
           content:
             "application/json":
               schema:
@@ -546,6 +585,156 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LinkResponse"
+    DiariaRequest:
+      type: object
+      required:
+        - data_atendimento
+        - tempo_atendimento
+        - preco
+        - cep
+        - logradouro
+        - bairro
+        - cidade
+        - estado
+        - codigo_ibge
+        - quantidade_cozinhas
+        - quantidade_banheiros
+        - quantidade_quintais
+        - quantidade_outros
+        - servico
+      properties:
+        data_atendimento:
+          type: string
+          format: date-time
+        tempo_atendimento:
+          type: integer
+        preco:
+          type: number
+          format: double
+        cep:
+          type: string
+        logradouro:
+          type: string
+        complemento:
+          type: string
+        bairro:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        codigo_ibge:
+          type: string
+        quantidade_quatos:
+          type: integer
+        quantidade_salas:
+          type: integer
+        quantidade_cozinhas:
+          type: integer
+        quantidade_banheiros:
+          type: integer
+        quantidade_quintais:
+          type: integer
+        quantidade_outros:
+          type: integer
+        observacoes:
+          type: string
+        servico:
+          type: integer
+    DiariaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        staus:
+          type: integer
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+        motivo_cancelamento:
+          type: string
+        nome_servico:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        data_atendimento:
+          type: string
+          format: date-time
+        tempo_atendimento:
+          type: integer
+        preco:
+          type: number
+          format: double
+        cep:
+          type: string
+        logradouro:
+          type: string
+        complemento:
+          type: string
+        bairro:
+          type: string
+        cidade:
+          type: string
+        estado:
+          type: string
+        codigo_ibge:
+          type: string
+        quantidade_quatos:
+          type: integer
+        quantidade_salas:
+          type: integer
+        quantidade_cozinhas:
+          type: integer
+        quantidade_banheiros:
+          type: integer
+        quantidade_quintais:
+          type: integer
+        quantidade_outros:
+          type: integer
+        observacoes:
+          type: string
+        servico:
+          type: integer
+        cliente:
+          $ref: "#/components/schemas/UsuarioDiariaResponse"
+        diarista:
+          $ref: "#/components/schemas/UsuarioDiariaResponse"
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkResponse"
+    UsuarioDiariaResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome_completo:
+          type: string
+        nascimento:
+          type: string
+          format: date
+        foto_usuario:
+          type: string
+          format: uri
+        telefone:
+          type: string
+        tipo_usuario:
+          type: integer
+          enum:
+            - 1
+            - 2
+        reputacao:
+          type: number
+          format: double
   securitySchemes:
     JWT:
       type: http
