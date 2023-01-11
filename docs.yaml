@@ -1,0 +1,89 @@
+openapi: 3.0.1
+info:
+  title: E-Diaristas
+  description: API back-end da aplicação E-Diaristas desenvolvida durante a imersão Multi-stack da TreinaWeb
+  version: 1.0.0
+  contact:
+    name: TreinaWeb
+    url: https://www.treinaweb.com.br/contato
+    email: contato@treinaweb.com.br
+servers:
+  - url: http://localhost:8080
+    description: Aplicação Spring Local
+  - url: https://ediaristas-api-php.herokuapp.com
+    description: Aplicação Laravel Heroku
+tags:
+  - name: Diaristas
+paths:
+  /api/diaristas/localidades:
+    get:
+      operationId: getDiaristasLocalidades
+      tags:
+        - Diaristas
+      description: Buscar diáristas que atendem uma determinada localidade
+      parameters:
+        - name: cep
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "04614903"
+      responses:
+        "200":
+          description: Busca foi realizada com sucesso
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/DiaristaLocalidadePagedResponse"
+        "400":
+          description: CEP não foi informado ou é inválido
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: CEP informado não foi encontrado
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    DiaristaLocalidadePagedResponse:
+      type: object
+      properties:
+        diaristas:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiaristaLocalidadeResponse"
+        quantidade_diaristas:
+          type: integer
+    DiaristaLocalidadeResponse:
+      type: object
+      properties:
+        nome_completo:
+          type: string
+        reputacao:
+          type: number
+          format: double
+        fot_usuario:
+          type: string
+          format: uri
+        cidade:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+        erros:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
